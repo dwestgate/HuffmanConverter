@@ -8,5 +8,18 @@
 
 import Foundation
 
-print("Hello, World!")
+var arguments = Arguments(arguments: Process.arguments)
 
+if (!arguments.valid) {
+  arguments.showUsage()
+} else {
+  var message = ""
+  
+  if arguments.compressing {
+    print("\nReading text file\n")
+    print("\nDone reading text file\n")
+  } else {
+    print("%nReading binary file%n")
+    print("Writing text file\n")
+  }
+}
