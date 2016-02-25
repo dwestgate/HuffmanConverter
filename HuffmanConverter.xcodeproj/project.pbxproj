@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		C41589531C72229500FE9C3F /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C41589521C72229500FE9C3F /* main.swift */; };
 		C415895A1C72259900FE9C3F /* Arguments.swift in Sources */ = {isa = PBXBuildFile; fileRef = C41589591C72259900FE9C3F /* Arguments.swift */; };
+		C415895D1C76951D00FE9C3F /* BinaryFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C415895C1C76951D00FE9C3F /* BinaryFile.swift */; };
+		C41589611C7A399D00FE9C3F /* TextFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C41589601C7A399D00FE9C3F /* TextFile.swift */; };
+		C458FA8F1C7F876C00AE0FD9 /* HuffmanCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C458FA8E1C7F876C00AE0FD9 /* HuffmanCode.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +31,9 @@
 		C41589521C72229500FE9C3F /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		C41589591C72259900FE9C3F /* Arguments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Arguments.swift; sourceTree = "<group>"; };
 		C415895B1C737FDF00FE9C3F /* testin */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testin; sourceTree = "<group>"; };
+		C415895C1C76951D00FE9C3F /* BinaryFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BinaryFile.swift; sourceTree = "<group>"; };
+		C41589601C7A399D00FE9C3F /* TextFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFile.swift; sourceTree = "<group>"; };
+		C458FA8E1C7F876C00AE0FD9 /* HuffmanCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HuffmanCode.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +69,9 @@
 				C41589521C72229500FE9C3F /* main.swift */,
 				C41589591C72259900FE9C3F /* Arguments.swift */,
 				C415895B1C737FDF00FE9C3F /* testin */,
+				C415895C1C76951D00FE9C3F /* BinaryFile.swift */,
+				C41589601C7A399D00FE9C3F /* TextFile.swift */,
+				C458FA8E1C7F876C00AE0FD9 /* HuffmanCode.swift */,
 			);
 			path = HuffmanConverter;
 			sourceTree = "<group>";
@@ -125,6 +134,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				C415895A1C72259900FE9C3F /* Arguments.swift in Sources */,
+				C41589611C7A399D00FE9C3F /* TextFile.swift in Sources */,
+				C458FA8F1C7F876C00AE0FD9 /* HuffmanCode.swift in Sources */,
+				C415895D1C76951D00FE9C3F /* BinaryFile.swift in Sources */,
 				C41589531C72229500FE9C3F /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -245,6 +257,7 @@
 				C41589581C72229500FE9C3F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

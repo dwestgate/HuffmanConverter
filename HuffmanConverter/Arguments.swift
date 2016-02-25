@@ -14,7 +14,7 @@ class Arguments {
   
   var forceCompression = false
   var verbose = false
-  var valid = false
+  var valid = true
   var compressing = false
   var decompressing = false
   var inputFile = ""
@@ -25,10 +25,10 @@ class Arguments {
     
     if ((arguments.count > 2) && (arguments.count < 6)) {
       
-      if ((arguments[1] == "-c") || (arguments[1] == "-C")) {
+      if (arguments[1].caseInsensitiveCompare("-c") == NSComparisonResult.OrderedSame) {
         compressing = true
         decompressing = false
-      } else if ((arguments[1] == "-u") || (arguments[1] == "-U")) {
+      } else if (arguments[1].caseInsensitiveCompare("-u") == NSComparisonResult.OrderedSame) {
         decompressing = true
         compressing = false
       } else {
@@ -36,18 +36,15 @@ class Arguments {
       }
       
       if (errorMessage == "") {
-        inputFile = arguments[arguments.count - 2]
-        outputFile = arguments[arguments.count - 1]
-        
-        let path = fileManager.currentDirectoryPath
-        print(path)
-// Test Code
+        inputFile = fileManager.currentDirectoryPath.stringByAppendingString("/\(arguments[arguments.count - 2])")
+        outputFile = fileManager.currentDirectoryPath.stringByAppendingString("/\(arguments[arguments.count - 1])")
+
+/* Test Code
         let file = "testwrite.txt" //this is the file. we will write to and read from it
         let text = "some text" //just a text
         
-        if let dir : NSString = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.AllDomainsMask, true).first {
-          let path = dir.stringByAppendingPathComponent(file);
-          
+        let path  = fileManager.currentDirectoryPath.stringByAppendingString("/\(file)")
+          print("\(path)")
           //writing
           do {
             try text.writeToFile(path, atomically: false, encoding: NSUTF8StringEncoding)
@@ -60,14 +57,14 @@ class Arguments {
             print("\(text2)")
           }
           catch {/* error handling here */}
-        }
-
-        
-// End Test Code
+ End Test Code */
         
         if !fileManager.isReadableFileAtPath(inputFile) {
           errorMessage = "Error: unable to read input file"
+        } else if (fileManager.fileExistsAtPath(outputFile)) {
+          errorMessage = "Error: output file already exists"
         }
+        
         /*
         if (!Files.isReadable(Paths.get(inputFile))) {
         errorMessage = "Error: unable to read input file"
@@ -92,10 +89,10 @@ class Arguments {
       }
       
       var i = 1
-      while ((errorMessage == "") && (i < arguments.count - 2)) {
-        if ((arguments[i] == "-v") || (arguments[i] == "-V")) {
+      while ((errorMessage == "") && (i < arguments.count - 3)) {
+        if (arguments[i].caseInsensitiveCompare("-v") == NSComparisonResult.OrderedSame) {
           verbose = true
-        } else if ((arguments[i] == "-f") || (arguments[i] == "-F")) {
+        } else if (arguments[i].caseInsensitiveCompare("-f") == NSComparisonResult.OrderedSame) {
           forceCompression = true
         } else {
           errorMessage = "Error: unknown flag"

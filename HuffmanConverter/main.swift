@@ -16,10 +16,36 @@ if (!arguments.valid) {
   var message = ""
   
   if arguments.compressing {
+    let tfr = TextFile(filename: arguments.inputFile, readOrWrite: "r")
     print("\nReading text file\n")
+    while (!tfr.EndOfFile()) {
+      message = message + String(tfr.readChar())
+    }
+    tfr.close()
     print("\nDone reading text file\n")
+    
+    
+    print("\nWriting text file\n")
+    let bfw = BinaryFile(filename: arguments.outputFile, readOrWrite: "w")
+    for c in message.characters {
+      bfw.writeChar(c)
+    }
+    print("")
+    bfw.close()
   } else {
-    print("%nReading binary file%n")
-    print("Writing text file\n")
+    let bfr = BinaryFile(filename: arguments.inputFile, readOrWrite: "r")
+    print("\nReading text file\n")
+    while (!bfr.EndOfFile()) {
+      message = message + String(bfr.readChar())
+    }
+    bfr.close()
+    print("\nDone reading text file\n")
+    print("\nWriting text file\n")
+    let tfw = BinaryFile(filename: arguments.outputFile, readOrWrite: "w")
+    for c in message.characters {
+      tfw.writeChar(c)
+    }
+    print("")
+    tfw.close()
   }
 }
