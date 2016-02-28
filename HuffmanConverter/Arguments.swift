@@ -88,8 +88,9 @@ class Arguments {
         // }
       }
       
-      var i = 1
-      while ((errorMessage == "") && (i < arguments.count - 3)) {
+      var i = 2
+      while ((errorMessage == "") && (i < arguments.count - 2)) {
+        print("\(arguments.count - 2)")
         if (arguments[i].caseInsensitiveCompare("-v") == NSComparisonResult.OrderedSame) {
           verbose = true
         } else if (arguments[i].caseInsensitiveCompare("-f") == NSComparisonResult.OrderedSame) {

@@ -24,6 +24,7 @@ if (!arguments.valid) {
     tfr.close()
     print("\nDone reading text file\n")
     
+    var huffCode = HuffmanCode(text: message, verbose: arguments.verbose, inputType: "ascii")
     
     print("\nWriting text file\n")
     let bfw = BinaryFile(filename: arguments.outputFile, readOrWrite: "w")
