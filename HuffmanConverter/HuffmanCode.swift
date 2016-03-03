@@ -14,7 +14,7 @@ class HuffmanCode {
   var verbose: Bool
   var uniqueCharacters: Int = 0
   var encodingScheme: [Character: String]?
-  var root: Node
+  var root: Node?
   var huffmanTree: String = ""
   var asciiCount: [Int] = []
   var decodingIndex: Int = 0
@@ -152,9 +152,9 @@ class HuffmanCode {
     var asciiFrequencies = asciiCount
     var sorted = [Int](count: uniqueCharacters, repeatedValue: 0)
     let nodeTemplate = Node()
-    var sortedNodes = [Node](count: uniqueCharacters, repeatedValue: nodeTemplate)
+    var sortedNodes = [Node?](count: uniqueCharacters, repeatedValue: nodeTemplate)
     var max = 0
-    
+
     for (var i = uniqueCharacters - 1; i >= 0; i--) {
       max = 0
       for (var j = 0; j < asciiFrequencies.count; j++) {
@@ -163,22 +163,22 @@ class HuffmanCode {
           sorted[i] = j
         }
       }
-      let temp = UInt8(sorted[i])
-      sortedNodes[i].character = decimalToASCIICharacter(temp) as Character
-      sortedNodes[i].frequency = 0
+      sortedNodes[i] = Node()
+      sortedNodes[i]!.character = decimalToASCIICharacter(UInt8(sorted[i]))
+      sortedNodes[i]!.frequency = asciiCount[sorted[i]]
       asciiFrequencies[sorted[i]] = 0
     }
     
-    // formTree(sortedNodes, 0)
+    formTree(sortedNodes, index: 0)
     
-    // createCodes(root, "")
-    
+    createCodes(&root, code: "")
+
     if (verbose) {
       printTree()
       printCodes()
     }
   }
-  
+
   /**
    * Reads a binary string representing a Huffman tree, builds the Huffman tree described, and then uses the
    * tree to determine the Huffman codes to be used in decoding a string
@@ -188,7 +188,7 @@ class HuffmanCode {
     readTree(root)
     createCodes(root, "")
   }*/
-  
+
   /**
    * Recursive method that builds a Huffman tree from a binary string description of that tree
    * @param node  A node in the Huffman tree
@@ -206,54 +206,56 @@ class HuffmanCode {
       readTree(node.right)
     }
   }*/
-  
+
   /**
    * Recursive method that builds a Huffman tree from an array of unassociated nodes
    * @param nodes An array of nodes, each containing a character found in the string along with the frequency with
    *              which it appears in the string
    * @param index The index usd to traverse the array of nodes
    */
-  /*func formTree(nodes: [Node], index: Int) {
-    if (index >= nodes.length - 1) {
-      root = nodes[index]
-    } else if (nodes[index].frequency > nodes[index + 1].frequency) {
-      int i = index
-      while ((i + 1 < nodes.length) && (nodes[index].frequency > nodes[i + 1].frequency)) {
+  func formTree(var nodes: [Node?], index: Int) {
+    
+    if (index >= nodes.count - 1) {
+      root = nodes[index]!
+    } else if (nodes[index]!.frequency > nodes[index + 1]!.frequency) {
+      var i = index
+      while ((i + 1 < nodes.count) && (nodes[index]!.frequency > nodes[i + 1]!.frequency)) {
         i++
       }
-      Node tmp = nodes[index]
+      let tmp = nodes[index]
       nodes[index] = nodes[i]
       nodes[i] = tmp
-      formTree(nodes, index)
-    } else if (nodes[index].frequency <= nodes[index + 1].frequency) {
-      Node tmp = new Node(nodes[index], nodes[index + 1], nodes[index].frequency + nodes[index + 1].frequency)
+      formTree(nodes, index: index)
+    } else if (nodes[index]!.frequency <= nodes[index + 1]!.frequency) {
+      let tmp = Node(left: nodes[index]!, right: nodes[index + 1]!, frequency: nodes[index]!.frequency + nodes[index + 1]!.frequency)
       nodes[index + 1] = tmp
-      nodes[index] = null
-      formTree(nodes, index + 1)
+      nodes[index] = nil
+      formTree(nodes, index: index + 1)
     }
-  }*/
-  
+  }
+
   /**
    * Given the root of a Huffman tree, traverses the tree to build a table of Huffman codes
    * @param root  The root of the Huffman tree
    * @param code  The Huffman codes
    */
-  /* func createCodes(root: Node, inout code: String) {
+  func createCodes(inout root: Node?, var code: String) {
     if (root != nil) {
-      root.huffCode = code
-      if (root.character != 0) {
+      root!.huffCode = code
+      if (root!.character != "0") {
         if (code == "") {
           code = "0"
         }
-        encodingScheme.put(root.character, code)
-        huffmanTree = huffmanTree + "0" + root.asciiBinary()
+        // encodingScheme.put(root.character, code)
+        encodingScheme?.updateValue(code, forKey: root!.character!)
+        huffmanTree = huffmanTree + "0" + root!.asciiBinary()
       } else {
         huffmanTree = huffmanTree + "1"
       }
-      createCodes(root.left, code + "0")
-      createCodes(root.right, code + "1")
+      createCodes(&root!.left, code: code + "0")
+      createCodes(&root!.right, code: code + "1")
     }
-  }*/
+  }
   
   /**
    * Used to output the Huffman tree. Outputs the tree both visually and as a binary string.
@@ -263,7 +265,7 @@ class HuffmanCode {
     print("                 Huffman Tree - Tree Format")
     print("  {charcter}:{number of occurrences - always 0 when decoding}")
     print("")
-    // printTreeNode(root, " ")
+    printTreeNode(&root, indent: "  ")
     print("")
     print("      Huffman Tree - Print as String")
     print("  A single bit with value 1 for each internal node")
@@ -278,16 +280,16 @@ class HuffmanCode {
    * @param node A node in the Huffman tree
    * @param indent    The indentation used when outputting the node
    */
-  func printTreeNode(node: Node, inout indent: String) {
-    /*if (node != nil) {
-      if (node.character == 0) {
-        node.character = " " // Add a space to make things align nicely
+  func printTreeNode(inout node: Node?, var indent: String) {
+    if (node != nil) {
+      if ((node!.character == nil) || (node!.character == "0")) {
+        node!.character = " " // Add a space to make things align nicely
       }
-      print("\(indent) \(node.character) \(node.frequency)")
+      print("\(indent)\(node!.character!): \(node!.frequency)")
       indent = indent + "      "
-      printTreeNode(node.left, indent)
-      printTreeNode(node.right, indent)
-    }*/
+      printTreeNode(&node!.left, indent: indent)
+      printTreeNode(&node!.right, indent: indent)
+    }
   }
   
   /**
@@ -297,7 +299,7 @@ class HuffmanCode {
     print("  ┌───────────────────────────────────────────────────────────────┐")
     print("  │                Input File Character Frequency                 │")
     print("  │                                                               │")
-    print("  │   Char      Decimal Hex         Binary            Frequency   │")
+    print("  │   Char      Decimal   Hex       Binary            Frequency   │")
     print("  ├───────────────────────────────────────────────────────────────┤")
     for (var i = 0; i < 256; i++) {
       if (asciiCount[i] > 0) {
@@ -306,12 +308,12 @@ class HuffmanCode {
         if (i > 31) {
           character = decimalToASCIICharacter(UInt8(i))
         }
-        print("  │     \(character)\t\t\(i)\t\(i)\t\t\(asBinary(i))\t\t\t\(asciiCount[i])\t│")
+        print(String(format: "  │     %1@         %3d    %4x      %8@ %19d   │", String(character), i, i, String(asBinary(i)), asciiCount[i]))
       }
     }
     print("  ├───────────────────────────────────────────────────────────────┤")
-    print("  │  Total characters:\t\(text.characters.count)\t\t\t\t\t\t\t│" )
-    print("  │  Unique characters:\t\(uniqueCharacters)\t\t\t\t\t\t\t│" )
+    print("  │  Total characters:\t\(text.characters.count)                                        │" )
+    print("  │  Unique characters:\t\(uniqueCharacters)                                        │" )
     print("  └───────────────────────────────────────────────────────────────┘")
     
   }

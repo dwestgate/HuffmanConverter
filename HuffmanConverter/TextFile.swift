@@ -59,7 +59,7 @@ class TextFile {
     } catch {
       print("Error encountered checking for end of file")
     }
-    print("position = \(position); filesize = \(filesize)")
+    // print("position = \(position); filesize = \(filesize)")
     return position >= filesize
   }
   

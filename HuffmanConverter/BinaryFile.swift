@@ -66,7 +66,7 @@ class BinaryFile {
     } catch {
       print("Error encountered checking for end of file")
     }
-    print("position = \(position); filesize = \(filesize)")
+    // print("position = \(position); filesize = \(filesize)")
     return position >= filesize
   }
   
@@ -134,7 +134,7 @@ class BinaryFile {
       bit_ = 0
     }
     buffer |= (bit_ << (bufferBits++))
-    print("\(String(buffer, radix: 2))")
+    // print("\(String(buffer, radix: 2))")
     if (bufferBits == 8) {
       file.writeData(NSData(bytes: &buffer, length: 1))
       bufferBits = 0
