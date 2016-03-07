@@ -3,8 +3,24 @@
 //  HuffmanConverter
 //
 //  Created by David Westgate on 2/21/16.
-//  Copyright © 2016 Refabricants. All rights reserved.
+//  Copyright © 2016 David Westgate. All rights reserved.
 //
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions: The above copyright
+//  notice and this permission notice shall be included in all copies or
+//  substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//  THE SOFTWARE
 
 import Foundation
 
@@ -15,13 +31,13 @@ class TextFile {
   var file: NSFileHandle
   var position: UInt64
   
+  
   /**
-  * Text File constructor.  Open a file for reading, or create
-  * a file for writing.  If we create a file, and a file already
-  * exists with that name, the old file will be removed.
-  * @param filename The name of the file to read from or write to
-  * @param readOrWrite 'w' or 'W' for an output file (open for writing),
-  * and 'r' or 'R' for an input file (open for reading)
+    Text File constructor.  Open a file for reading, or create a file for writing.  If we create a file, and a file already exists with that name, the old file will be removed.
+   
+    - Parameters:
+      - filename: The name of the file to read from or write to
+      - readOrWrite: 'w' or 'W' for an output file (open for writing), and 'r' or 'R' for an input file (open for reading)
   */
   init (filename: String, readOrWrite: Character) {
     
@@ -40,12 +56,9 @@ class TextFile {
   
   
   /**
-  * Checks to see if we are at the end of a file.  This method is only
-  * valid for input files, calling EndOfFile on an output fill will
-  * cause the program to exit.  (This method should probably really throw an
-  * exception instead of halting the program on an error, but I'm
-  * trying to make your code a little simplier)
-  * @return True if we are at the end of an input file, and false otherwise
+    Checks to see if we are at the end of a file.  This method is only valid for input files, calling EndOfFile on an output fill will cause the program to exit.
+   
+    - Returns: **true** if we are at the end of an input file, **false** otherwise
   */
   func EndOfFile() -> Bool  {
     
@@ -59,21 +72,14 @@ class TextFile {
     } catch {
       print("Error encountered checking for end of file")
     }
-    // print("position = \(position); filesize = \(filesize)")
     return position >= filesize
   }
   
   
   /**
-  * Read in the next character from the input file
-  * This method is only valud for input files, and
-  * will throw an halt program execution if called on an outpt file.
-  * (This method should probably really throw an
-  * exception instead of halting the program on an error, but I'm
-  * trying to make your code a little simplier)
-  * This method will also halt execution if you try to read past the
-  * end of a file.
-  * @return The next character from an input file
+    Read in the next character from the input file. This method is only valud for input files, and will throw an halt program execution if called on an outpt file. This method will also halt execution if you try to read past the end of a file.
+
+   - Returns: The next character from an input file
   */
   func readChar() -> Character {
     
@@ -88,12 +94,10 @@ class TextFile {
   
   
   /**
-  * Write a character to an output file.   This method is only valid for
-  * output files, and will halt execution if called on an input file.
-  * (This method should probably really throw an
-  * exception instead of halting the program on an error, but I'm
-  * trying to make your code a little simplier)
-  * @param c The character to write to the output file.
+    Write a character to an output file.   This method is only valid for output files, and will halt execution if called on an input file.
+   
+    - Parameters:
+      - c: The character to write to the output file
   */
   func writeChar(c: Character) {
     
@@ -105,8 +109,7 @@ class TextFile {
   
   
   /**
-  * Close the file (works for input and output files).  Output files will
-  * not be properly written to disk if this method is not called.
+    Close the file (works for input and output files).  Output files will not be properly written to disk if this method is not called.
   */
   func close() {
     file.closeFile()
@@ -114,8 +117,7 @@ class TextFile {
   
   
   /**
-  * Rewind the input file to the beginning, so we can reread
-  * the file.  Only valid for input files.
+    Rewind the input file to the beginning, so we can reread the file.  Only valid for input files.
   */
   func rewind() {
     // Assert.notFalse(inputFile,"Can only rewind input files!")

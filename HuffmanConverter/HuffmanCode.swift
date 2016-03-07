@@ -1,10 +1,26 @@
- //
+//
 //  HuffmanCode.swift
 //  HuffmanConverter
 //
 //  Created by David Westgate on 2/25/16.
-//  Copyright © 2016 Refabricants. All rights reserved.
+//  Copyright © 2016 David Westgate. All rights reserved.
 //
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions: The above copyright
+//  notice and this permission notice shall be included in all copies or
+//  substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//  THE SOFTWARE
 
 import Foundation
 
@@ -20,10 +36,10 @@ class HuffmanCode {
   var decodingIndex: Int = 0
   
   /**
-   * @param text      The text to be coded or decoded using Huffman coding
-   * @param verbose   Indicates whether the application is running in "verbose" mode or not. Verbose mode is
-   *                  triggered when the -v command line parameter has been provided
-   * @param inputType Indicates whether the text provided is in binary or ascii format
+    - Parameters:
+      - text: The text to be coded or decoded using Huffman coding
+      - verbose: Indicates whether the application is running in "verbose" mode or not. Verbose mode is triggered when the -v command line parameter has been provided
+      - inputType: Indicates whether the text provided is in binary or ascii format
    */
   init(text: String, verbose: Bool, inputType: String) {
     self.text = text
@@ -55,8 +71,9 @@ class HuffmanCode {
   }
   
   /**
-   * Encodes the provided ascii text using Huffman coding
-   * @return  The Huffman code of the provided ascii text
+    Encodes the provided ascii text using Huffman coding
+   
+    - Returns: The Huffman code of the provided ascii text
    */
   func encode() -> String {
     var code: String
@@ -68,18 +85,14 @@ class HuffmanCode {
       code = encodingScheme[char]!
       compressedMessage = compressedMessage + code
     }
-    /*
-    for (var i = 0; i < text.characters.count; i++) {
-    code = encodingScheme.get(text.charAt(i))
-    compressedMessage = compressedMessage + code
-    }*/
     
     return compressedMessage
   }
   
   /**
-   * Decodes a Huffman coded binary string to ascii
-   * @return  The ascii code of the provided Huffman coded binary string
+    Decodes a Huffman coded binary string to ascii
+   
+    - Returns: The ascii code of the provided Huffman coded binary string
    */
   func decode() -> String {
     var decompressedMessage = ""
@@ -104,8 +117,7 @@ class HuffmanCode {
   }
   
   /**
-   *
-   * @return  The size of the string when saved as an ascii text file
+    - Returns: The size of the string when saved as an ascii text file
    */
   func getUnencodedSize() -> Int {
     print("text.characters.count = \(text.characters.count)")
@@ -113,8 +125,7 @@ class HuffmanCode {
   }
   
   /**
-   *
-   * @return  The size of the string when saved as a Huffman coded binary file
+    - Returns: The size of the string when saved as a Huffman coded binary file
    */
   func getEncodedSize() -> Int {
     var size = 32 + 16 + huffmanTree.characters.count
@@ -129,8 +140,7 @@ class HuffmanCode {
   }
   
   /**
-   * Counts the number of occurrences of each ascii character in the ascii string by populating a simple array
-   * where the array indexes represent the ascii values of characters in the file.
+    Counts the number of occurrences of each ascii character in the ascii string by populating a simple array where the array indexes represent the ascii values of characters in the file.
    */
   func countChars() {
     for char in text.characters {
@@ -142,8 +152,8 @@ class HuffmanCode {
   }
   
   /**
-   * Builds a Huffman tree and then uses the tree to determine the Huffman codes for each character in the string
-   */
+    Builds a Huffman tree and then uses the tree to determine the Huffman codes for each character in the string
+  */
   func createEncoding() {
     var asciiFrequencies = asciiCount
     var sorted = [Int](count: uniqueCharacters, repeatedValue: 0)
@@ -166,7 +176,6 @@ class HuffmanCode {
     }
     
     formTree(sortedNodes, index: 0)
-    
     createCodes(&root, code: "")
 
     if (verbose) {
@@ -176,18 +185,18 @@ class HuffmanCode {
   }
 
   /**
-   * Reads a binary string representing a Huffman tree, builds the Huffman tree described, and then uses the
-   * tree to determine the Huffman codes to be used in decoding a string
+    Reads a binary string representing a Huffman tree, builds the Huffman tree described, and then uses the tree to determine the Huffman codes to be used in decoding a string
    */
   func readEncoding() {
-    // var root = Node()
     readTree(root!)
     createCodes(&root, code: "")
   }
 
   /**
-   * Recursive method that builds a Huffman tree from a binary string description of that tree
-   * @param node  A node in the Huffman tree
+    Recursive method that builds a Huffman tree from a binary string description of that tree
+    
+    - Parameters:
+      - node: A node in the Huffman tree
    */
   func readTree(node: Node) {
     if (text.substringWithRange(Range(start: text.startIndex.advancedBy(decodingIndex), end: text.startIndex.advancedBy(decodingIndex + 1))) == "0") {
@@ -207,10 +216,11 @@ class HuffmanCode {
   }
 
   /**
-   * Recursive method that builds a Huffman tree from an array of unassociated nodes
-   * @param nodes An array of nodes, each containing a character found in the string along with the frequency with
-   *              which it appears in the string
-   * @param index The index usd to traverse the array of nodes
+    Recursive method that builds a Huffman tree from an array of unassociated nodes
+   
+    - Parameters:
+      - nodes: An array of nodes, each containing a character found in the string along with the frequency with which it appears in the string
+      - index: The index usd to traverse the array of nodes
    */
   func formTree(var nodes: [Node?], index: Int) {
     if (index >= nodes.count - 1) {
@@ -233,10 +243,12 @@ class HuffmanCode {
   }
 
   /**
-   * Given the root of a Huffman tree, traverses the tree to build a table of Huffman codes
-   * @param root  The root of the Huffman tree
-   * @param code  The Huffman codes
-   */
+    - Given the root of a Huffman tree, traverses the tree to build a table of Huffman codes
+   
+    - Parameters:
+      - root:  The root of the Huffman tree
+      - code:  The Huffman codes
+  */
   func createCodes(inout root: Node?, var code: String) {
     if (root != nil) {
       root!.huffCode = code
@@ -244,9 +256,7 @@ class HuffmanCode {
         if (code == "") {
           code = "0"
         }
-        // encodingScheme.put(root.character, code)
         encodingScheme[char] = code
-        // encodingScheme[root!.character] = code
         huffmanTree = huffmanTree + "0" + root!.asciiBinary()
       } else {
         huffmanTree = huffmanTree + "1"
@@ -257,8 +267,8 @@ class HuffmanCode {
   }
   
   /**
-   * Used to output the Huffman tree. Outputs the tree both visually and as a binary string.
-   */
+    Used to output the Huffman tree. Outputs the tree both visually and as a binary string.
+  */
   func printTree() {
     print("")
     print("                 Huffman Tree - Tree Format")
@@ -275,9 +285,11 @@ class HuffmanCode {
   }
   
   /**
-   * Called by PrintTree, recursively prints Huffman tree nodes
-   * @param node A node in the Huffman tree
-   * @param indent    The indentation used when outputting the node
+    Called by PrintTree, recursively prints Huffman tree nodes
+
+    - Parameters:
+      - node: A node in the Huffman tree
+      - indent: The indentation used when outputting the node
    */
   func printTreeNode(inout node: Node?, var indent: String) {
     if (node != nil) {
@@ -286,9 +298,6 @@ class HuffmanCode {
       } else {
         print("\(indent) : \(node!.frequency)")
       }
-      /* if (node!.character == "0") {
-        node!.character = " " // Add a space to make things align nicely
-      }*/
       
       indent = indent + "      "
       printTreeNode(&node!.left, indent: indent)
@@ -297,7 +306,7 @@ class HuffmanCode {
   }
   
   /**
-   * Outputs a table showing the frequencies of occurrence of each ascii character in the string
+    Outputs a table showing the frequencies of occurrence of each ascii character in the string
    */
   func printAsciiCount() {
     print("  ┌───────────────────────────────────────────────────────────────┐")
@@ -325,7 +334,7 @@ class HuffmanCode {
   
   // TODO: replace iterations with map/reduce
   /**
-   * Outputs a table showing each ascii character in the string and the Huffman code that has been assigned to it
+    Outputs a table showing each ascii character in the string and the Huffman code that has been assigned to it
    */
   func printCodes() {
     print("  ┌───────────────────────────────────────────────────────────────┐")
@@ -357,10 +366,12 @@ class HuffmanCode {
   
   
   /**
-   * Returns the ASCII decimal value of a Character
-   * value represented as an 8-bit binary value and padded with zeroes as needed
-   * @param char    The Character
-   * @return  The ASCII value of the Character, as a UInt8
+    Returns the ASCII decimal value of a Character value represented as an 8-bit binary value and padded with zeroes as needed
+   
+    - Parameters:
+      - char: The Character
+   
+    - Returns: The ASCII value of the Character, as a UInt8
    */
   func characterToASCIIDecimal(char: Character) -> UInt8 {
     
@@ -371,9 +382,12 @@ class HuffmanCode {
   
   
   /**
-   * Converts an ASCII decimal value into a Character
-   * @param char    The Character to be converted to binary
-   * @return  A string representing the Character's decimal ASCII value, in binary
+    Converts an ASCII decimal value into a Character
+   
+    - Parameters:
+      - char: The Character to be converted to binary
+   
+    - Returns: A string representing the Character's decimal ASCII value, in binary
    */
   func decimalToASCIICharacter(value: UInt8) -> Character {
     return Character(UnicodeScalar(value))
@@ -381,10 +395,12 @@ class HuffmanCode {
   
   
   /**
-   * Converts a Character into a String representation of that Character's ASCII
-   * value represented as an 8-bit binary value and padded with zeroes as needed
-   * @param char    The Character to be converted to binary
-   * @return  A string representing the Character's decimal ASCII value, in binary
+    Converts a Character into a String representation of that Character's ASCII value represented as an 8-bit binary value and padded with zeroes as needed
+   
+    - Parameters:
+      - char: The Character to be converted to binary
+   
+    - Returns: A string representing the Character's decimal ASCII value, in binary
    */
   func characterToASCIIBinary(char: Character) -> String {
     var returnValue = String(characterToASCIIDecimal(char), radix: 2)
@@ -397,9 +413,12 @@ class HuffmanCode {
   
   
   /**
-   * Converts an int into a String representation of that int's 8-bit binary value, padding with zeroes as needed
-   * @param number    The int to be converted to binary
-   * @return  A string representing the binary value of the number
+    Converts an int into a String representation of that int's 8-bit binary value, padding with zeroes as needed
+   
+    - Parameters:
+      - number: The int to be converted to binary
+   
+    - Returns: A string representing the binary value of the number
    */
   func intToBinary(number: Int) -> String {
     var returnValue = String(number, radix: 2)
@@ -417,7 +436,7 @@ class HuffmanCode {
   
   
   /**
-   * Outputs the compressed and uncompressed size of the string
+    Outputs the compressed and uncompressed size of the string
    */
   func printCompressionReport() {
     let uncompressed = getUnencodedSize()
@@ -434,7 +453,7 @@ class HuffmanCode {
   }
   
   /**
-   * Huffman tree Node element, used to build the Huffman tree
+    Huffman tree Node element, used to build the Huffman tree
    */
   class Node {
     
@@ -445,10 +464,11 @@ class HuffmanCode {
     var huffCode: String
     
     /**
-     * Constructor for the Node class: called from createEncoding(), it allows population of frequency as the
-     * array of unassociated leaf nodes is first assembled
-     * @param character A character found int he string
-     * @param frequency The frequency with which the character appears in the string
+      Constructor for the Node class: called from createEncoding(), it allows population of frequency as the array of unassociated leaf nodes is first assembled
+     
+      - Parameters:
+        - character: A character found int he string
+        - frequency: The frequency with which the character appears in the string
      */
     init(character: Character, frequency: Int) {
       self.left = nil
@@ -459,10 +479,12 @@ class HuffmanCode {
     }
     
     /**
-     * Constructor for the Node class: called from formTree(), it is used to create inner nodes
-     * @param left  Left child of the node
-     * @param right Right child of the node
-     * @param frequency The combined frequency of this node's child nodes
+      Constructor for the Node class: called from formTree(), it is used to create inner nodes
+     
+      - Parameters:
+        - left: Left child of the node
+        - right: Right child of the node
+        - frequency: The combined frequency of this node's child nodes
      */
     init(left: Node, right: Node, frequency: Int) {
       self.left = left
@@ -472,8 +494,7 @@ class HuffmanCode {
     }
     
     /**
-     * Constructor for the Node class: called from readTree(), it is used when building up a tree from a
-     * binary string representation of a Huffman tree and allows the creation of blank nodes
+      Constructor for the Node class: called from readTree(), it is used when building up a tree from a binary string representation of a Huffman tree and allows the creation of blank nodes
      */
     init() {
       self.left = nil
@@ -483,8 +504,7 @@ class HuffmanCode {
     }
     
     /**
-     *
-     * @return  The decimal value of the ascii character which the node represents
+      - Returns: The decimal value of the ascii character which the node represents
      */
     func asciiDecimal() -> UInt8 {
       
@@ -494,8 +514,7 @@ class HuffmanCode {
     }
     
     /**
-     *
-     * @return  The binary representation of the ascii character which the node represents
+      - Returns: The binary representation of the ascii character which the node represents
      */
     func asciiBinary() -> String {
       var returnValue = String(asciiDecimal(), radix: 2)
@@ -507,13 +526,11 @@ class HuffmanCode {
     }
     
     /**
-     *
-     * @return  The hexidecimal value of the ascii character which the node represents
+      - Returns: The hexidecimal value of the ascii character which the node represents
      */
     func asciiHex() -> String {
       return String(asciiDecimal(), radix: 16)
     }
-    
   }
   
 }

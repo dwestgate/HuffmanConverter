@@ -30,7 +30,6 @@
 		C415894F1C72229500FE9C3F /* HuffmanConverter */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = HuffmanConverter; sourceTree = BUILT_PRODUCTS_DIR; };
 		C41589521C72229500FE9C3F /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		C41589591C72259900FE9C3F /* Arguments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Arguments.swift; sourceTree = "<group>"; };
-		C415895B1C737FDF00FE9C3F /* testin */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testin; sourceTree = "<group>"; };
 		C415895C1C76951D00FE9C3F /* BinaryFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BinaryFile.swift; sourceTree = "<group>"; };
 		C41589601C7A399D00FE9C3F /* TextFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFile.swift; sourceTree = "<group>"; };
 		C458FA8E1C7F876C00AE0FD9 /* HuffmanCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HuffmanCode.swift; sourceTree = "<group>"; };
@@ -68,7 +67,6 @@
 			children = (
 				C41589521C72229500FE9C3F /* main.swift */,
 				C41589591C72259900FE9C3F /* Arguments.swift */,
-				C415895B1C737FDF00FE9C3F /* testin */,
 				C415895C1C76951D00FE9C3F /* BinaryFile.swift */,
 				C41589601C7A399D00FE9C3F /* TextFile.swift */,
 				C458FA8E1C7F876C00AE0FD9 /* HuffmanCode.swift */,
