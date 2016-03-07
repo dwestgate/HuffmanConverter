@@ -13,7 +13,7 @@ class HuffmanCode {
   var text: String = ""
   var verbose: Bool
   var uniqueCharacters: Int = 0
-  var encodingScheme: [Character: String]?
+  var encodingScheme = [Character: String]()
   var root: Node?
   var huffmanTree: String = ""
   var asciiCount: [Int] = []
@@ -29,8 +29,6 @@ class HuffmanCode {
     self.text = text
     self.verbose = verbose
     self.uniqueCharacters = 0
-    self.encodingScheme = [Character: String]()
-    self.encodingScheme = nil
     self.root = Node()
     self.huffmanTree = ""
     self.asciiCount = [Int](count: 256, repeatedValue: 0)
@@ -49,7 +47,7 @@ class HuffmanCode {
         printCompressionReport()
       }
     } else {
-      // readEncoding()
+      readEncoding()
       if (verbose) {
         printTree()
       }
@@ -67,7 +65,7 @@ class HuffmanCode {
     compressedMessage = compressedMessage + huffmanTree
     
     for char in text.characters {
-      code = encodingScheme![char]!
+      code = encodingScheme[char]!
       compressedMessage = compressedMessage + code
     }
     /*
@@ -83,35 +81,34 @@ class HuffmanCode {
    * Decodes a Huffman coded binary string to ascii
    * @return  The ascii code of the provided Huffman coded binary string
    */
-  /*func decode() -> String {
+  func decode() -> String {
     var decompressedMessage = ""
-    var code: String
+    var decodingScheme = [String: Character]()
+    var possibleCode = ""
     
-    var found = false
+    let messageText = text.substringFromIndex(text.startIndex.advancedBy(decodingIndex))
     
-    while (decodingIndex < text.characters.count) {
-      var i = 0
-      for char in encodingScheme {
-        code = encodingScheme
-        if (decodingIndex + code.characters.count <= text.characters.count) {
-          var a = text.substring(decodingIndex, decodingIndex + code.length())
-          if (code.equals(text.substring(decodingIndex, decodingIndex + code.length()))) {
-            decodingIndex = decodingIndex + code.length()
-            decompressedMessage = decompressedMessage + character
-            break
-          }
-        }
+    for key in encodingScheme.keys {
+      decodingScheme[encodingScheme[key]!] = key
+    }
+    
+    for digit in messageText.characters {
+      possibleCode += String(digit)
+      if let char = decodingScheme[possibleCode] {
+        decompressedMessage = decompressedMessage + String(char)
+        possibleCode = ""
       }
     }
     
     return decompressedMessage
-  }*/
+  }
   
   /**
    *
    * @return  The size of the string when saved as an ascii text file
    */
   func getUnencodedSize() -> Int {
+    print("text.characters.count = \(text.characters.count)")
     return text.characters.count * 8
   }
   
@@ -119,18 +116,17 @@ class HuffmanCode {
    *
    * @return  The size of the string when saved as a Huffman coded binary file
    */
-  /*func getEncodedSize() -> Int {
-    var size = 32 + 16 + huffmanTree.length()
-    
+  func getEncodedSize() -> Int {
+    var size = 32 + 16 + huffmanTree.characters.count
+
     for (var i = 0; i < 256; i++) {
-      var code: String = encodingScheme.get((char) i)
-      if (code != nil) {
-        size = size + asciiCount[i] * encodingScheme.get((char) i).length()
+      if let code = encodingScheme[decimalToASCIICharacter(UInt8(i))] {
+        size = size + asciiCount[i] * code.characters.count
       }
     }
     
     return size
-  }*/
+  }
   
   /**
    * Counts the number of occurrences of each ascii character in the ascii string by populating a simple array
@@ -183,29 +179,32 @@ class HuffmanCode {
    * Reads a binary string representing a Huffman tree, builds the Huffman tree described, and then uses the
    * tree to determine the Huffman codes to be used in decoding a string
    */
-  /*func readEncoding() {
-    var root: Node()
-    readTree(root)
-    createCodes(root, "")
-  }*/
+  func readEncoding() {
+    // var root = Node()
+    readTree(root!)
+    createCodes(&root, code: "")
+  }
 
   /**
    * Recursive method that builds a Huffman tree from a binary string description of that tree
    * @param node  A node in the Huffman tree
    */
-  /*func readTree(node: Node) {
-    if (text.charAt(decodingIndex) == '0') {
-      node.character = (char) Integer.parseInt(text.substring(decodingIndex + 1, decodingIndex + 9), 2)
+  func readTree(node: Node) {
+    if (text.substringWithRange(Range(start: text.startIndex.advancedBy(decodingIndex), end: text.startIndex.advancedBy(decodingIndex + 1))) == "0") {
+      
+      let binaryWord = text.substringWithRange(Range(start: text.startIndex.advancedBy(decodingIndex + 1), end: text.startIndex.advancedBy(decodingIndex + 9)))
+      let number = Int(binaryWord, radix: 2)
+      node.character = decimalToASCIICharacter(UInt8(number!))
       decodingIndex = decodingIndex + 9
       uniqueCharacters++
     } else {
       decodingIndex++
-      node.left = new Node()
-      readTree(node.left)
-      node.right = new Node()
-      readTree(node.right)
+      node.left = Node()
+      readTree(node.left!)
+      node.right = Node()
+      readTree(node.right!)
     }
-  }*/
+  }
 
   /**
    * Recursive method that builds a Huffman tree from an array of unassociated nodes
@@ -214,7 +213,6 @@ class HuffmanCode {
    * @param index The index usd to traverse the array of nodes
    */
   func formTree(var nodes: [Node?], index: Int) {
-    
     if (index >= nodes.count - 1) {
       root = nodes[index]!
     } else if (nodes[index]!.frequency > nodes[index + 1]!.frequency) {
@@ -242,12 +240,13 @@ class HuffmanCode {
   func createCodes(inout root: Node?, var code: String) {
     if (root != nil) {
       root!.huffCode = code
-      if (root!.character != "0") {
+      if let char = root!.character {
         if (code == "") {
           code = "0"
         }
         // encodingScheme.put(root.character, code)
-        encodingScheme?.updateValue(code, forKey: root!.character!)
+        encodingScheme[char] = code
+        // encodingScheme[root!.character] = code
         huffmanTree = huffmanTree + "0" + root!.asciiBinary()
       } else {
         huffmanTree = huffmanTree + "1"
@@ -282,10 +281,15 @@ class HuffmanCode {
    */
   func printTreeNode(inout node: Node?, var indent: String) {
     if (node != nil) {
-      if ((node!.character == nil) || (node!.character == "0")) {
-        node!.character = " " // Add a space to make things align nicely
+      if let char = node!.character {
+        print("\(indent)\(char): \(node!.frequency)")
+      } else {
+        print("\(indent) : \(node!.frequency)")
       }
-      print("\(indent)\(node!.character!): \(node!.frequency)")
+      /* if (node!.character == "0") {
+        node!.character = " " // Add a space to make things align nicely
+      }*/
+      
       indent = indent + "      "
       printTreeNode(&node!.left, indent: indent)
       printTreeNode(&node!.right, indent: indent)
@@ -308,7 +312,7 @@ class HuffmanCode {
         if (i > 31) {
           character = decimalToASCIICharacter(UInt8(i))
         }
-        print(String(format: "  │     %1@         %3d    %4x      %8@ %19d   │", String(character), i, i, String(asBinary(i)), asciiCount[i]))
+        print(String(format: "  │     %1@         %3d    %4x      %8@ %19d   │", String(character), i, i, String(intToBinary(i)), asciiCount[i]))
       }
     }
     print("  ├───────────────────────────────────────────────────────────────┤")
@@ -318,6 +322,8 @@ class HuffmanCode {
     
   }
   
+  
+  // TODO: replace iterations with map/reduce
   /**
    * Outputs a table showing each ascii character in the string and the Huffman code that has been assigned to it
    */
@@ -328,17 +334,24 @@ class HuffmanCode {
     print("  │   Char    Decimal   Hex      Binary              Encoding     │")
     print("  ├───────────────────────────────────────────────────────────────┤")
     
-    /*var ascii = 0
-    var code = ""
-    for (Character character : encodingScheme.keySet()) {
-      ascii = (int) character
-      code = encodingScheme.get(character)
+    let keys = encodingScheme.keys.sort()
+    
+    for k in keys {
+      var char = k
+      let ascii = Int(characterToASCIIDecimal(k))
+      let code = encodingScheme[k]
       if (ascii < 32) {
-        character = " "
+        char = " "
       }
       
-      print("  │ \(character) \(ascii) \(Integer.toHexString(ascii)) \(asBinary(ascii)) \(code) │\n")
-    }*/
+      var spaces  = " "
+      
+      for (var i = 0; i < 22 - code!.characters.count; i++) {
+        spaces += " "
+      }
+      
+      print(String(format: "  │     %@       %3d    %4x     %8@%@%@   │", String(char), ascii, ascii, intToBinary(ascii), spaces, code!))
+    }
     print("  └───────────────────────────────────────────────────────────────┘")
   }
   
@@ -388,7 +401,7 @@ class HuffmanCode {
    * @param number    The int to be converted to binary
    * @return  A string representing the binary value of the number
    */
-  func asBinary(number: Int) -> String {
+  func intToBinary(number: Int) -> String {
     var returnValue = String(number, radix: 2)
     
     while (returnValue.characters.count < 8) {
@@ -397,19 +410,27 @@ class HuffmanCode {
     return returnValue
   }
   
+  
+  func intToHex(number: Int) -> String {
+    return String(format: "%x", number)
+  }
+  
+  
   /**
    * Outputs the compressed and uncompressed size of the string
    */
   func printCompressionReport() {
-    /*var uncompressed: Int = getUnencodedSize()
-    var compressed: Int = getEncodedSize()
+    let uncompressed = getUnencodedSize()
+    let uncompressedBytes = Int(ceil(Double(uncompressed) / 8.0))
+    let compressed = getEncodedSize()
+    let compressedBytes = Int(ceil(Double(compressed) / 8.0))
     
-    print("  ┌───────────────────────────────────────────────────────────────┐\n")
-    print("  │                      Compression Report                       │\n")
-    print("  │                                                               │\n")
-    print("  │ Uncompressed size: \(getUnencodedSize()) bits \(getUnencodedSize()) bytes         │\n")
-    print("  │ Compressed size  : \(getEncodedSize()) bits \(getEncodedSize()) bytes         │\n")
-    print("  └───────────────────────────────────────────────────────────────┘\n")*/
+    print("  ┌───────────────────────────────────────────────────────────────┐")
+    print("  │                      Compression Report                       │")
+    print("  │                                                               │")
+    print("  │ Uncompressed size: \(uncompressed) bits \(uncompressedBytes) bytes         │")
+    print("  │ Compressed size  : \(compressed) bits \(compressedBytes) bytes         │")
+    print("  └───────────────────────────────────────────────────────────────┘")
   }
   
   /**
@@ -420,7 +441,7 @@ class HuffmanCode {
     var left: Node?
     var right: Node?
     var character: Character?
-    var frequency: Int
+    var frequency : Int
     var huffCode: String
     
     /**
@@ -467,7 +488,7 @@ class HuffmanCode {
      */
     func asciiDecimal() -> UInt8 {
       
-      let value = String(self.character).utf8.first
+      let value = String(self.character!).utf8.first
       
       return UTF8.CodeUnit(value!)
     }

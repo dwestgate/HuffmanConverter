@@ -26,24 +26,45 @@ if (!arguments.valid) {
     
     var huffCode = HuffmanCode(text: message, verbose: arguments.verbose, inputType: "ascii")
     
-    print("\nWriting text file\n")
-    let bfw = BinaryFile(filename: arguments.outputFile, readOrWrite: "w")
-    for c in message.characters {
-      bfw.writeChar(c)
+    if ((huffCode.getEncodedSize() < huffCode.getUnencodedSize() || arguments.forceCompression)) {
+      print("\nWriting compressed file\n")
+      
+      let compressedMessage = huffCode.encode()
+      
+      
+      let bfw = BinaryFile(filename: arguments.outputFile, readOrWrite: "w")
+      for c in compressedMessage.characters {
+        bfw.writeBit(c == "1" ? true: false)
+      }
+      print("")
+      bfw.close()
+      
+    } else {
+      print("")
+      print("Compression aborted: unable to reduce file size. To force compression regardless, use the -f flag.")
     }
-    print("")
-    bfw.close()
   } else {
     let bfr = BinaryFile(filename: arguments.inputFile, readOrWrite: "r")
-    print("\nReading text file\n")
+    print("\nReading binary file\n")
+    
+    // Argument verification has already confirmed the first two characters are 'HF'
+    for (var i = 0; i < 16; i++) {
+      bfr.readBit()
+    }
+    
     while (!bfr.EndOfFile()) {
-      message = message + String(bfr.readChar())
+      message = message + String(bfr.readBit() ? 1: 0)
     }
     bfr.close()
-    print("\nDone reading text file\n")
+
+    var huffCode = HuffmanCode(text: message, verbose: arguments.verbose, inputType: "binary")
+    
+    var decompressedMessage = huffCode.decode()
+    print(decompressedMessage)
+    
     print("\nWriting text file\n")
-    let tfw = BinaryFile(filename: arguments.outputFile, readOrWrite: "w")
-    for c in message.characters {
+    let tfw = TextFile(filename: arguments.outputFile, readOrWrite: "w")
+    for c in decompressedMessage.characters {
       tfw.writeChar(c)
     }
     print("")

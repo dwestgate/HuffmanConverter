@@ -13,10 +13,11 @@ class BinaryFile {
   var filename: String
   var inputFile: Bool
   var file: NSFileHandle
-  var position: UInt64
+  var position: UInt32
   var buffer: UInt8
   var bufferBits: UInt8
   var bitsRemaining: UInt8
+  var sizeInBits: UInt32
   
   /**
    * Binary File constructor. Open a file for reading, or create
@@ -30,6 +31,7 @@ class BinaryFile {
     
     self.filename = filename
     self.position = 0
+    self.sizeInBits = 0
     buffer = 0
     bufferBits = 0
     bitsRemaining = 0
@@ -38,36 +40,30 @@ class BinaryFile {
       inputFile = false
       NSFileManager.defaultManager().createFileAtPath(filename, contents: nil, attributes: nil)
       self.file = NSFileHandle(forWritingAtPath: filename)!
+      file.writeData(NSData(bytes: &sizeInBits, length: sizeof(UInt32)))
     } else {
       inputFile = true
       self.file = NSFileHandle(forReadingAtPath: filename)!
+      
+      let fileData = file.readDataOfLength(sizeof(UInt32))
+      fileData.getBytes(&sizeInBits, length: sizeof(UInt32))
+      position = position + UInt32(sizeof(UInt32) * 8)
     }
   }
   
   
   /**
-  * Checks to see if we are at the end of a file.  This method is only
-  * valid for input files, calling EndOfFile on an output fill will
-  * cause the program to halt execution.
-  * (This method should probably really throw an
-  * exception instead of halting the program on an error, but I'm
-  * trying to make your code a little simplier)
-  * @return True if we are at the end of an input file, and false otherwise
-  */
+   * Checks to see if we are at the end of a file.  This method is only
+   * valid for input files, calling EndOfFile on an output fill will
+   * cause the program to halt execution.
+   * (This method should probably really throw an
+   * exception instead of halting the program on an error, but I'm
+   * trying to make your code a little simplier)
+   * @return True if we are at the end of an input file, and false otherwise
+   */
   func EndOfFile() -> Bool {
-    
-    var filesize: UInt64 = 0
-    
-    do {
-      let attr: NSDictionary? = try NSFileManager.defaultManager().attributesOfItemAtPath(filename)
-      if let _attr = attr {
-        filesize = _attr.fileSize()
-      }
-    } catch {
-      print("Error encountered checking for end of file")
-    }
     // print("position = \(position); filesize = \(filesize)")
-    return position >= filesize
+    return position >= sizeInBits
   }
   
   /**
@@ -106,7 +102,7 @@ class BinaryFile {
     // var charbuf: UInt8 = 0
     var charbuf = String(c).utf8.first
     /* for codeUnit in String(c).utf8 {
-      charbuf = codeUnit
+    charbuf = codeUnit
     }*/
     
     for (var i=0; i < 8; i++) {
@@ -125,7 +121,7 @@ class BinaryFile {
    * @param bit The bit to write.  false writes a 0 and true writes a 1.
    */
   func writeBit(bit: Bool) {
-    // total_bits++
+    position++
     var bit_: UInt8 = 0
     
     if (bit) {
@@ -136,7 +132,7 @@ class BinaryFile {
     buffer |= (bit_ << (bufferBits++))
     // print("\(String(buffer, radix: 2))")
     if (bufferBits == 8) {
-      file.writeData(NSData(bytes: &buffer, length: 1))
+      file.writeData(NSData(bytes: &buffer, length: sizeof(UInt8)))
       bufferBits = 0
       buffer = 0
     }
@@ -151,19 +147,24 @@ class BinaryFile {
    * @return The next bit in the input file -- false for 0 and true for 1.
    */
   func readBit() -> Bool {
-    
+    // print("Entering readBit")
     if (bitsRemaining == 0) {
-      let fileData = file.readDataOfLength(1)
+      // print("bitsRemaining = \(bitsRemaining)")
+      let fileData = file.readDataOfLength(sizeof(UInt8))
       var array: UInt8 = 0
-      fileData.getBytes(&array, length:sizeof(UInt8))
+      fileData.getBytes(&array, length: sizeof(UInt8))
       buffer = array
       bitsRemaining = 8
-      position++
     }
-    // bitsread++
-    return (((buffer >> --bitsRemaining) & 0x01) > 0)
+    position++
+    // print("position = \(position)")
+    // let b = String(buffer, radix: 2)
+    // print("buffer = \(b)")
+    // print("bitsRemaining = \(bitsRemaining)")
+    // print("correct bit = \((buffer >> (8 - bitsRemaining) & 0x01))")
+    return ((buffer >> (8 - bitsRemaining--) & 0x01) > 0)
   }
-
+  
   
   /**
    * Close the file (works for input and output files).  Output files will
@@ -171,12 +172,19 @@ class BinaryFile {
    */
   func close() {
     if (!inputFile) {
+      
+      sizeInBits = position
+      
       if (bufferBits != 0) {
         while (bufferBits < 8) {
           buffer |= (0 << (bufferBits++))
         }
-        file.writeData(NSData(bytes: &buffer, length: 1))
+        file.writeData(NSData(bytes: &buffer, length: sizeof(UInt8)))
       }
+      file.seekToFileOffset(0)
+      // print("sizeInBits = \(sizeInBits)\n\n")
+      file.writeData(NSData(bytes: &sizeInBits, length: sizeof(UInt32)))
+      // print("sizeof(UInt32) = \(sizeof(UInt32))")
     }
     file.closeFile()
   }

@@ -75,7 +75,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "testout"
+            argument = "testout.bin"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

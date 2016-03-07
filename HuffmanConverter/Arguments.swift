@@ -38,54 +38,47 @@ class Arguments {
       if (errorMessage == "") {
         inputFile = fileManager.currentDirectoryPath.stringByAppendingString("/\(arguments[arguments.count - 2])")
         outputFile = fileManager.currentDirectoryPath.stringByAppendingString("/\(arguments[arguments.count - 1])")
-
-/* Test Code
+        
+        /* Test Code
         let file = "testwrite.txt" //this is the file. we will write to and read from it
         let text = "some text" //just a text
         
         let path  = fileManager.currentDirectoryPath.stringByAppendingString("/\(file)")
-          print("\(path)")
-          //writing
-          do {
-            try text.writeToFile(path, atomically: false, encoding: NSUTF8StringEncoding)
-          }
-          catch {/* error handling here */}
-          
-          //reading
-          do {
-            let text2 = try NSString(contentsOfFile: path, encoding: NSUTF8StringEncoding)
-            print("\(text2)")
-          }
-          catch {/* error handling here */}
- End Test Code */
+        print("\(path)")
+        //writing
+        do {
+        try text.writeToFile(path, atomically: false, encoding: NSUTF8StringEncoding)
+        }
+        catch {/* error handling here */}
+        
+        //reading
+        do {
+        let text2 = try NSString(contentsOfFile: path, encoding: NSUTF8StringEncoding)
+        print("\(text2)")
+        }
+        catch {/* error handling here */}
+        End Test Code */
         
         if !fileManager.isReadableFileAtPath(inputFile) {
           errorMessage = "Error: unable to read input file"
         } else if (fileManager.fileExistsAtPath(outputFile)) {
           errorMessage = "Error: output file already exists"
-        }
-        
-        /*
-        if (!Files.isReadable(Paths.get(inputFile))) {
-        errorMessage = "Error: unable to read input file"
-        }  else if (Files.exists(Paths.get(outputFile))) {
-        errorMessage = "Error: output file already exists"
         } else if (decompressing) {
-        var magicNumber = ""
-        
-        BinaryFile bf = new BinaryFile(inputFile, 'r')
-        
-        var i = 0
-        while ((!bf.EndOfFile() && (i < 16))) {
-        magicNumber = magicNumber + Integer.toString((bf.readBit()) ? 1 : 0)
-        i++
-        }*/
-        // bf.close()
-        
-        /* if (magicNumber != "0100100001000110") {
-        errorMessage = "Error: file to uncompress is not Huffman coded"
-        }*/
-        // }
+          var magicNumber = ""
+          
+          let bfr = BinaryFile(filename: inputFile, readOrWrite: "r")
+          
+          var i = 0
+          while ((!bfr.EndOfFile() && (i < 16))) {
+            magicNumber = magicNumber + String((bfr.readBit()) ? 1 : 0)
+            i++
+          }
+          bfr.close()
+          
+          if (magicNumber != "0100100001000110") {
+            errorMessage = "Error: file to uncompress is not Huffman coded"
+          }
+        }
       }
       
       var i = 2
